@@ -1,25 +1,22 @@
-name: Release
+name: CI / Release
 
-# Triggers when you push a version tag like v0.0.1, v1.2.0, etc.
 on:
   push:
-    tags:
-      - 'v*'
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
 
 jobs:
-  build-and-release:
-    name: Build VSIX and create GitHub Release
+  # ── Runs on every push and PR ─────────────────────────────────────────────
+  ci:
+    name: Lint, Test & Package
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: write   # needed to create a GitHub Release
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -36,6 +33,37 @@ jobs:
       - name: Package VSIX
         run: npm run package
 
+      - name: Upload VSIX artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: terminal-ai-vsix
+          path: '*.vsix'
+          retention-days: 7
+
+  # ── Runs only when a version tag is pushed ────────────────────────────────
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: ci
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Package VSIX
+        run: npm run package
+
       - name: Get VSIX filename
         id: vsix
         run: echo "file=$(ls *.vsix)" >> "$GITHUB_OUTPUT"
@@ -48,15 +76,20 @@ jobs:
             ## Install
 
             1. Download `${{ steps.vsix.outputs.file }}` below
-            2. In VS Code: `Extensions` → `···` → `Install from VSIX…`
+            2. In VS Code: **Extensions** → `···` → **Install from VSIX…**
             3. Select the downloaded file
+
+            Or from the terminal:
+            ```bash
+            code --install-extension ${{ steps.vsix.outputs.file }}
+            ```
 
             ## Requirements
             - [Claude Code CLI](https://claude.ai/code) installed and authenticated
             - macOS or Linux
 
             ## What's new
-            See [CHANGELOG](https://github.com/pro-gramming/terminal-extension-claude/commits/${{ github.ref_name }}) for details.
+            See [commits](https://github.com/pro-gramming/terminal-extension-claude/commits/${{ github.ref_name }}) for details.
           files: ${{ steps.vsix.outputs.file }}
           draft: false
           prerelease: false
