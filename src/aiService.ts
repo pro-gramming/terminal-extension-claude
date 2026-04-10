@@ -1,42 +1,55 @@
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import * as vscode from 'vscode';
 import { OsInfo } from './types';
 import { logger } from './logger';
+import { buildPrompt, parseClaudeOutput } from './promptUtils';
 
 const execAsync = promisify(exec);
 
-const SYSTEM_PROMPT = `You are a shell command generator.
-Given a natural language instruction and the user's OS/shell info, respond with ONLY the shell command — no explanation, no markdown, no code blocks.
-If the task cannot be expressed as a single command, use pipes or && to chain commands on one line.`;
+const DEFAULT_SYSTEM_PROMPT =
+  `You are a shell command generator. ` +
+  `Given a natural language instruction and the user's OS/shell info, respond with ONLY the shell command — ` +
+  `no explanation, no markdown, no code blocks. ` +
+  `If the task cannot be expressed as a single command, use pipes or && to chain commands on one line.`;
 
-export async function generateCommand(instruction: string, osInfo: OsInfo): Promise<string> {
-  const platformLabel =
-    osInfo.platform === 'win32' ? 'Windows' : osInfo.platform === 'darwin' ? 'macOS' : 'Linux';
+export async function generateCommand(
+  instruction: string,
+  osInfo: OsInfo,
+  abortSignal?: AbortSignal,
+): Promise<string> {
+  if (osInfo.platform === 'win32') {
+    throw new Error('Windows is not currently supported. Please use WSL or a POSIX shell.');
+  }
 
-  const prompt = `${SYSTEM_PROMPT}\n\nOS: ${platformLabel}\nShell: ${osInfo.shell}\n\nInstruction: ${instruction}`;
+  const config = vscode.workspace.getConfiguration('terminalAI');
+  const systemPrompt = config.get<string>('systemPrompt') || DEFAULT_SYSTEM_PROMPT;
+  const claudeBin   = config.get<string>('claudePath') || 'claude';
+  const timeoutMs   = (config.get<number>('timeoutSeconds') ?? 30) * 1000;
 
-  // Use single-quoted here-string via login shell to avoid escaping issues
-  const loginShell = process.env.SHELL || '/bin/zsh';
+  const prompt = buildPrompt(instruction, osInfo, systemPrompt);
+  const claudeCmd = `${claudeBin} -p ${JSON.stringify(prompt)} < /dev/null`;
+  const fullCmd = `${osInfo.loginShell} -l -c ${JSON.stringify(claudeCmd)}`;
 
-  // Redirect stdin from /dev/null so claude doesn't wait for piped input
-  const claudeCmd = `claude -p ${JSON.stringify(prompt)} < /dev/null`;
-  const fullCmd = `${loginShell} -l -c ${JSON.stringify(claudeCmd)}`;
+  logger.info(`Invoking: ${osInfo.loginShell} -l -c ${claudeBin} -p "<prompt>"`);
+  logger.info(`Instruction (${instruction.length} chars)`);
 
-  logger.info(`Invoking claude via: ${loginShell} -l -c claude -p "<prompt>"`);
-  logger.info(`Instruction: ${instruction}`);
-  logger.info(`Platform: ${platformLabel}, Shell: ${osInfo.shell}`);
-
-  const { stdout, stderr } = await execAsync(fullCmd, { timeout: 60_000 });
+  const { stdout, stderr } = await execAsync(fullCmd, {
+    timeout: timeoutMs,
+    maxBuffer: 1024 * 512,
+    signal: abortSignal,
+  });
 
   if (stderr) {
     logger.warn(`claude stderr: ${stderr.trim()}`);
   }
 
-  if (!stdout && stderr) {
-    throw new Error(stderr.trim());
+  const { command, truncated } = parseClaudeOutput(stdout, stderr);
+
+  if (truncated) {
+    logger.warn('Claude returned multiple lines; only the first line was used to prevent unintended execution.');
   }
 
-  const result = stdout.trim();
-  logger.info(`Generated command: ${result}`);
-  return result;
+  logger.info(`Generated command (${command.length} chars): ${command.slice(0, 80)}${command.length > 80 ? '…' : ''}`);
+  return command;
 }

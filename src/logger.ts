@@ -24,6 +24,10 @@ export const logger = {
 };
 
 function log(level: string, message: string): void {
-  const timestamp = new Date().toISOString();
-  channel?.appendLine(`[${timestamp}] [${level}] ${message}`);
+  if (!channel) {
+    // Logger used before initLogger() was called — surface in developer console so it's never silent
+    console.warn(`[TerminalAI] Logger not initialised — dropping: [${level}] ${message}`);
+    return;
+  }
+  channel.appendLine(`[${new Date().toISOString()}] [${level}] ${message}`);
 }

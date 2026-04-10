@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
  * Shows a floating command-palette-style input box.
  * Resolves with the user's instruction, or undefined if dismissed.
  */
-export function showInputPanel(_context: vscode.ExtensionContext): Promise<string | undefined> {
+export function showInputPanel(): Promise<string | undefined> {
   return new Promise((resolve) => {
     const inputBox = vscode.window.createInputBox();
 

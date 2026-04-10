@@ -23,16 +23,45 @@
         "command": "terminalAI.invoke",
         "when": "terminalFocus"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Terminal AI",
+      "properties": {
+        "terminalAI.claudePath": {
+          "type": "string",
+          "default": "claude",
+          "description": "Path to the Claude Code CLI binary. Defaults to 'claude' (must be on PATH)."
+        },
+        "terminalAI.systemPrompt": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Override the system prompt sent to Claude. Leave empty to use the built-in prompt."
+        },
+        "terminalAI.timeoutSeconds": {
+          "type": "number",
+          "default": 30,
+          "minimum": 5,
+          "maximum": 120,
+          "description": "Maximum seconds to wait for Claude to respond before timing out."
+        }
+      }
+    }
   },
   "scripts": {
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "vscode:prepublish": "npm run compile"
+    "lint": "eslint src --ext .ts",
+    "test:unit": "npm run compile && mocha 'out/test/**/*.test.js'",
+    "vscode:prepublish": "npm run lint && npm run compile"
   },
   "devDependencies": {
+    "@types/mocha": "^10.0.0",
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.57.0",
+    "mocha": "^10.0.0",
     "typescript": "^5.3.0"
   }
 }
