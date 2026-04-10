@@ -1,6 +1,6 @@
 # Terminal AI — Cmd+K for VS Code
 
-Bring Cursor's Cmd+K terminal experience to VS Code. Press **Cmd+K** (macOS) or **Ctrl+K** (Windows/Linux) while the integrated terminal has focus, describe what you want to do in plain English, and the extension generates the right shell command and types it into the terminal — without running it — so you stay in control.
+Bring Cursor's Cmd+K terminal experience to VS Code. Press **Cmd+K** (macOS) or **Ctrl+K** (Linux) while the integrated terminal has focus, describe what you want to do in plain English, and the extension generates the right shell command and types it into the terminal — without running it — so you stay in control.
 
 ## How It Works
 
@@ -12,17 +12,35 @@ Bring Cursor's Cmd+K terminal experience to VS Code. Press **Cmd+K** (macOS) or 
 ## Requirements
 
 - [Claude Code CLI](https://claude.ai/code) installed and authenticated (`claude --version` should work)
-- macOS or Linux (Windows is not currently supported)
+- macOS or Linux (Windows not currently supported)
 
 ## Installation
 
-1. Clone this repo and open it in VS Code
-2. Run `npm install`
-3. Press **F5** to launch the Extension Development Host
+### Option A — Download VSIX (recommended)
+
+1. Go to the [Releases page](https://github.com/pro-gramming/terminal-extension-claude/releases)
+2. Download the latest `terminal-ai-*.vsix` file
+3. In VS Code: open the **Extensions** panel → click `···` → **Install from VSIX…**
+4. Select the downloaded file
+
+Or install directly from the terminal:
+```bash
+code --install-extension terminal-ai-<version>.vsix
+```
+
+### Option B — Build from source
+
+```bash
+git clone https://github.com/pro-gramming/terminal-extension-claude.git
+cd terminal-extension-claude
+npm install
+npm run package        # produces terminal-ai-*.vsix
+code --install-extension terminal-ai-*.vsix
+```
 
 ## Configuration
 
-All settings are under `terminalAI` in VS Code settings:
+All settings are under `terminalAI` in VS Code settings (`Cmd+,`):
 
 | Setting | Default | Description |
 |---|---|---|
@@ -37,6 +55,7 @@ npm run compile     # Build TypeScript → out/
 npm run watch       # Rebuild on save
 npm run lint        # ESLint
 npm run test:unit   # Run unit tests
+npm run package     # Build .vsix
 ```
 
 Press **F5** in VS Code to launch the Extension Development Host for manual testing.
@@ -47,3 +66,7 @@ Press **F5** in VS Code to launch the Extension Development Host for manual test
 - **Multi-line protection**: if Claude returns multiple lines, only the first is used to prevent accidental execution via embedded newlines.
 - **Prompt injection mitigation**: user input is separated from the system prompt by an explicit delimiter and marked as untrusted in every request.
 - **No embedded credentials**: the extension delegates entirely to the locally installed `claude` CLI.
+
+## License
+
+[MIT](./LICENSE)

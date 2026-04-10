@@ -64,9 +64,11 @@
     "watch": "tsc -watch -p ./",
     "lint": "eslint src --ext .ts",
     "test:unit": "npm run compile && mocha 'out/test/**/*.test.js'",
-    "vscode:prepublish": "npm run lint && npm run compile"
+    "vscode:prepublish": "npm run lint && npm run compile",
+    "package": "vsce package --no-dependencies"
   },
   "devDependencies": {
+    "@vscode/vsce": "^3.0.0",
     "@types/mocha": "^10.0.0",
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.85.0",

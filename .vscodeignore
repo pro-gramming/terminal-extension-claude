@@ -1,11 +1,15 @@
 .git/**
 .vscode/**
 .vscode-test/**
+.idea/**
+.github/**
 node_modules/**
 src/**
+scripts/**
+out/test/**
 .eslintrc.json
 .gitignore
 tsconfig.json
+*.vsix
 **/*.map
 **/*.ts
-scripts/**
