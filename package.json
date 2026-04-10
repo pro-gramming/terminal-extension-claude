@@ -1,13 +1,24 @@
 {
   "name": "terminal-ai",
   "displayName": "Terminal AI (Cmd+K)",
-  "description": "Replicate Cursor's Cmd+K experience in the VS Code terminal using Claude Code",
+  "description": "Cmd+K for your VS Code terminal — describe what you want in plain English, get the right shell command instantly via Claude Code.",
   "version": "0.0.1",
+  "publisher": "pro-gramming",
+  "license": "MIT",
+  "homepage": "https://github.com/pro-gramming/terminal-extension-claude#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pro-gramming/terminal-extension-claude.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pro-gramming/terminal-extension-claude/issues"
+  },
+  "keywords": ["terminal", "ai", "claude", "shell", "productivity", "cmd+k"],
   "engines": {
     "vscode": "^1.85.0"
   },
   "icon": "icon.png",
-  "categories": ["Other"],
+  "categories": ["Other", "AI"],
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
