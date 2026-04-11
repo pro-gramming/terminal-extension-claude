@@ -72,11 +72,15 @@ jobs:
           EOF
           cat RELEASE_NOTES.md >> /tmp/release_body.md
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          name: Terminal AI ${{ github.ref_name }}
-          body_path: /tmp/release_body.md
-          files: ${{ steps.vsix.outputs.file }}
-          draft: false
-          prerelease: false
+      - name: Create or update GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ github.ref_name }}"
+          VSIX="${{ steps.vsix.outputs.file }}"
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            gh release edit "$TAG" --title "Terminal AI $TAG" --notes-file /tmp/release_body.md
+            gh release upload "$TAG" "$VSIX" --clobber
+          else
+            gh release create "$TAG" --title "Terminal AI $TAG" --notes-file /tmp/release_body.md "$VSIX"
+          fi
