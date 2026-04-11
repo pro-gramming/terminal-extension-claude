@@ -68,27 +68,25 @@ jobs:
         id: vsix
         run: echo "file=$(ls *.vsix)" >> "$GITHUB_OUTPUT"
 
+      - name: Build release body
+        run: |
+          cat <<EOF > /tmp/release_body.md
+          ## Install
+
+          \`\`\`bash
+          curl -L https://github.com/pro-gramming/terminal-extension-claude/releases/download/${{ github.ref_name }}/${{ steps.vsix.outputs.file }} -o terminal-ai.vsix && code --install-extension terminal-ai.vsix
+          \`\`\`
+
+          ---
+
+          EOF
+          cat RELEASE_NOTES.md >> /tmp/release_body.md
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           name: Terminal AI ${{ github.ref_name }}
-          body: |
-            ## Install
-
-            ```bash
-            curl -L https://github.com/pro-gramming/terminal-extension-claude/releases/download/${{ github.ref_name }}/${{ steps.vsix.outputs.file }} -o terminal-ai.vsix && code --install-extension terminal-ai.vsix
-            ```
-
-            ---
-
-            ## What's Added
-            -
-
-            ## What's Changed
-            -
-
-            ## Bug Fixes
-            -
+          body_path: /tmp/release_body.md
           files: ${{ steps.vsix.outputs.file }}
           draft: false
           prerelease: false
