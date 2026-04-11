@@ -64,7 +64,9 @@ jobs:
           ## Install
 
           \`\`\`bash
-          curl -L https://github.com/pro-gramming/terminal-extension-claude/releases/download/${{ github.ref_name }}/${{ steps.vsix.outputs.file }} -o terminal-ai.vsix && code --install-extension terminal-ai.vsix
+          curl -L https://github.com/pro-gramming/terminal-extension-claude/releases/download/${{ github.ref_name }}/${{ steps.vsix.outputs.file }} \\
+            -o terminal-ai.vsix && \\
+            code --install-extension terminal-ai.vsix
           \`\`\`
 
           ---
