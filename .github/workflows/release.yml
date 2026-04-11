@@ -75,21 +75,20 @@ jobs:
           body: |
             ## Install
 
-            1. Download `${{ steps.vsix.outputs.file }}` below
-            2. In VS Code: **Extensions** → `···` → **Install from VSIX…**
-            3. Select the downloaded file
-
-            Or from the terminal:
             ```bash
-            code --install-extension ${{ steps.vsix.outputs.file }}
+            curl -L https://github.com/pro-gramming/terminal-extension-claude/releases/download/${{ github.ref_name }}/${{ steps.vsix.outputs.file }} -o terminal-ai.vsix && code --install-extension terminal-ai.vsix
             ```
 
-            ## Requirements
-            - [Claude Code CLI](https://claude.ai/code) installed and authenticated
-            - macOS or Linux
+            ---
 
-            ## What's new
-            See [commits](https://github.com/pro-gramming/terminal-extension-claude/commits/${{ github.ref_name }}) for details.
+            ## What's Added
+            -
+
+            ## What's Changed
+            -
+
+            ## Bug Fixes
+            -
           files: ${{ steps.vsix.outputs.file }}
           draft: false
           prerelease: false
