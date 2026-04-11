@@ -81,8 +81,8 @@ jobs:
           TAG="${{ github.ref_name }}"
           VSIX="${{ steps.vsix.outputs.file }}"
           if gh release view "$TAG" > /dev/null 2>&1; then
-            gh release edit "$TAG" --title "Terminal AI $TAG" --notes-file /tmp/release_body.md
+            gh release edit "$TAG" --title "Terminal AI $TAG" --notes-file /tmp/release_body.md --draft=false
             gh release upload "$TAG" "$VSIX" --clobber
           else
-            gh release create "$TAG" --title "Terminal AI $TAG" --notes-file /tmp/release_body.md "$VSIX"
+            gh release create "$TAG" --title "Terminal AI $TAG" --notes-file /tmp/release_body.md --draft=false "$VSIX"
           fi
