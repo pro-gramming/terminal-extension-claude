@@ -1,5 +1,16 @@
 # Terminal AI — Cmd+K for VS Code
 
+[![repo size](https://img.shields.io/github/repo-size/pro-gramming/terminal-extension-claude?color=blue)](https://github.com/pro-gramming/terminal-extension-claude)
+[![languages](https://img.shields.io/github/languages/count/pro-gramming/terminal-extension-claude?color=blue)](https://github.com/pro-gramming/terminal-extension-claude)
+[![top language](https://img.shields.io/github/languages/top/pro-gramming/terminal-extension-claude?color=blue)](https://github.com/pro-gramming/terminal-extension-claude)
+[![last commit](https://img.shields.io/github/last-commit/pro-gramming/terminal-extension-claude?color=orange)](https://github.com/pro-gramming/terminal-extension-claude/commits/main)
+
+---
+
+**[How It Works](#how-it-works)** · **[Requirements](#requirements)** · **[Installation](#installation)** · **[Configuration](#configuration)** · **[Development](#development)** · **[Security](#security-notes)** · **[License](#license)**
+
+---
+
 Bring Cursor's Cmd+K terminal experience to VS Code. Press **Cmd+K** (macOS) or **Ctrl+K** (Linux) while the integrated terminal has focus, describe what you want to do in plain English, and the extension generates the right shell command and types it into the terminal — without running it — so you stay in control.
 
 ## How It Works
@@ -69,4 +80,4 @@ Press **F5** in VS Code to launch the Extension Development Host for manual test
 
 ## License
 
-[MIT](./LICENSE)
+[MIT](./LICENSE.md) — free to use, modify, and distribute.

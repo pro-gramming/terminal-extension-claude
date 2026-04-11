@@ -1,3 +1,23 @@
+# License
+
+Terminal AI is released under the **MIT License** — one of the most permissive open-source licenses available.
+
+## What this means for you
+
+| You can | You must | You cannot |
+|---|---|---|
+| Use it commercially | Include the copyright notice | Hold the author liable |
+| Modify the source code | Include this license text | Claim warranty |
+| Distribute copies | | |
+| Use it privately | | |
+| Sublicense it | | |
+
+In short: do whatever you want with it, just keep the copyright notice attached.
+
+---
+
+## Full License Text
+
 MIT License
 
 Copyright (c) 2026 Pro-gramming
