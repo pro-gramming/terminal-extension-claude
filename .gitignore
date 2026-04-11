@@ -4,3 +4,4 @@ out/
 *.js.map
 .env
 .idea/*
+.claude

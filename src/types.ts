@@ -3,3 +3,8 @@ export interface OsInfo {
   shell: string;       // vscode.env.shell — used in prompt context
   loginShell: string;  // process.env.SHELL — used to spawn child processes
 }
+
+export interface TerminalExecution {
+  command: string;
+  output: string;
+}

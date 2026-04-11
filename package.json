@@ -15,7 +15,7 @@
   },
   "keywords": ["terminal", "ai", "claude", "shell", "productivity", "cmd+k"],
   "engines": {
-    "vscode": "^1.85.0"
+    "vscode": "^1.93.0"
   },
   "icon": "icon.png",
   "categories": ["Other", "AI"],
@@ -36,6 +36,7 @@
         "when": "terminalFocus"
       }
     ],
+    "globalState": ["terminalAI.history"],
     "configuration": {
       "title": "Terminal AI",
       "properties": {
@@ -71,7 +72,7 @@
     "@vscode/vsce": "^3.0.0",
     "@types/mocha": "^10.0.0",
     "@types/node": "^20.0.0",
-    "@types/vscode": "^1.85.0",
+    "@types/vscode": "^1.93.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
     "eslint": "^8.57.0",

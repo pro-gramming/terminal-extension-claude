@@ -11,11 +11,14 @@ const DEFAULT_SYSTEM_PROMPT =
   `You are a shell command generator. ` +
   `Given a natural language instruction and the user's OS/shell info, respond with ONLY the shell command — ` +
   `no explanation, no markdown, no code blocks. ` +
-  `If the task cannot be expressed as a single command, use pipes or && to chain commands on one line.`;
+  `If the task cannot be expressed as a single command, use pipes or && to chain commands on one line. ` +
+  `When creating files with multi-line content, use a heredoc (e.g. cat > file.txt << 'EOF'\\nline1\\nline2\\nEOF) so the user can clearly review the content before it is written. ` +
+  `For long commands, use backslash line continuation (\\) to break across multiple lines for readability.`;
 
 export async function generateCommand(
   instruction: string,
   osInfo: OsInfo,
+  terminalContext: string,
   abortSignal?: AbortSignal,
 ): Promise<string> {
   if (osInfo.platform === 'win32') {
@@ -27,7 +30,7 @@ export async function generateCommand(
   const claudeBin   = config.get<string>('claudePath') || 'claude';
   const timeoutMs   = (config.get<number>('timeoutSeconds') ?? 30) * 1000;
 
-  const prompt = buildPrompt(instruction, osInfo, systemPrompt);
+  const prompt = buildPrompt(instruction, osInfo, systemPrompt, terminalContext || undefined);
   const claudeCmd = `${claudeBin} -p ${JSON.stringify(prompt)} < /dev/null`;
   const fullCmd = `${osInfo.loginShell} -l -c ${JSON.stringify(claudeCmd)}`;
 
@@ -47,7 +50,7 @@ export async function generateCommand(
   const { command, truncated } = parseClaudeOutput(stdout, stderr);
 
   if (truncated) {
-    logger.warn('Claude returned multiple lines; only the first line was used to prevent unintended execution.');
+    logger.warn('Claude returned multiple non-continuation lines; only the first line was used to prevent unintended execution.');
   }
 
   logger.info(`Generated command (${command.length} chars): ${command.slice(0, 80)}${command.length > 80 ? '…' : ''}`);
